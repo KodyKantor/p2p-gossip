@@ -2,6 +2,7 @@ package id
 
 import (
 	"crypto/rand"
+	"fmt"
 	"github.com/Sirupsen/logrus"
 )
 
@@ -10,7 +11,6 @@ const (
 )
 
 var log = logrus.New()
-var zeroID = make([]byte, DEFAULT_SIZE) //can be edited later
 
 func init() {
 	log.Println("Initialized id")
@@ -23,10 +23,22 @@ type ID struct {
 
 //New returns an ID struct
 func New(numberOfBytes int) ID {
+	if numberOfBytes < 1 {
+		numberOfBytes = DEFAULT_SIZE
+	}
 	id := generateID(numberOfBytes)
 	return ID{id, numberOfBytes}
 }
 
+func NewFromByteSlice(slice []byte) ID {
+	if slice == nil {
+		return New(DEFAULT_SIZE) // the user screwed up, so we'll fix it
+	}
+
+	return ID{randomID: slice, size: len(slice)}
+}
+
+//ServeIDs returns ID structs through the provided channel.
 func (id *ID) ServeIDs(c chan ID) {
 	for true {
 		log.Println("Sending new ID")
@@ -75,8 +87,13 @@ func generateID(numberOfBytes int) []byte {
 
 //GetZeroID returns a new ID structure with a totally
 //zeroed random ID.
-func GetZeroID(numberOfBytes int) ID {
-	return ID{zeroID, numberOfBytes}
+func GetZeroID(numberOfBytes int) (ID, error) {
+	if numberOfBytes < 1 {
+		return ID{}, fmt.Errorf("Provided number of bytes, %v, invalid.", numberOfBytes)
+	}
+
+	zeroID := make([]byte, numberOfBytes)
+	return NewFromByteSlice(zeroID), nil
 }
 
 //GetID copies the ID before returning it.

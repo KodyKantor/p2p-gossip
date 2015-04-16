@@ -85,3 +85,25 @@ func TestServeIDs(t *testing.T) {
 		}
 	}
 }
+
+//TestGetZeroID tests the GetZeroID function.
+func TestGetZeroID(t *testing.T) {
+	var newID ID
+	var err error
+
+	for size := 32; size < 64; size++ {
+		newID, err = GetZeroID(size)
+		if err != nil {
+			t.Errorf("Error should be nil: %v", err)
+		}
+		if len(newID.randomID) != size {
+			t.Errorf("Randomly generated ID is not the proper size: %v != %v", len(newID.randomID), size)
+		}
+	}
+
+	for size := -64; size < 1; size++ {
+		if _, err = GetZeroID(size); err == nil {
+			t.Errorf("GetZeroID should return an error for a size of %v", size)
+		}
+	}
+}
