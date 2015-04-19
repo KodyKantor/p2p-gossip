@@ -54,10 +54,7 @@ func TestGetBytes(t *testing.T) {
 	peerTTL.SetTTL(123)
 
 	var buf []byte
-	buf, err := peerTTL.GetBytes()
-	if err != nil {
-		t.Errorf("Error converting ttl to bytes: %v", err)
-	}
+	buf = peerTTL.GetBytes()
 	if len(buf) != 4 {
 		t.Errorf("Len of byte slice must be 4 to be compatible with protocol: %v", len(buf))
 	}
@@ -79,9 +76,7 @@ func TestGetFromBytes(t *testing.T) {
 	var peerTTL TTL
 
 	peerTTL = new(PeerTTL)
-	num := make([]byte, 4, 4) //allocate space and pointer
-
-	num[0] = 1 // make the ttl = 1
+	num := []byte{1, 0, 0, 0}
 
 	ret, err := peerTTL.CreateFromBytes(num)
 	if err != nil {

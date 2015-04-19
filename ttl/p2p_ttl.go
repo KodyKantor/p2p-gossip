@@ -1,6 +1,7 @@
 package ttl
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 )
@@ -42,14 +43,17 @@ func (t *PeerTTL) CreateTTL(time int) (TTL, error) {
 
 // CreateFromBytes takes a byte slice and turns it into a TTL.
 func (t *PeerTTL) CreateFromBytes(time []byte) (TTL, error) {
-	log.Println("size of slice is ", len(time))
-	decoded, count := binary.Varint(time)
-	log.Println("Decoded the value", decoded)
-	res := int(decoded) // cast as 32-bit integer
-	if count != 4 {
-		return &PeerTTL{}, fmt.Errorf("Improper number of bytes read from buffer: %v", count)
+	if time == nil {
+		return &PeerTTL{}, fmt.Errorf("TTL byte slice is nil.")
 	}
-	return &PeerTTL{res}, nil
+	var ret int32 //to hold the decoded value
+	buf := bytes.NewBuffer(time)
+	err := binary.Read(buf, binary.LittleEndian, &ret)
+	//	decoded, err := binary.ReadVarint(buf)
+	if err != nil {
+		return &PeerTTL{}, fmt.Errorf("Error deocding ttl: %v", err)
+	}
+	return &PeerTTL{int(ret)}, nil
 }
 
 //DecrementTTL decrements the TTL by the constant value defined in the package.
