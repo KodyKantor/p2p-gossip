@@ -1,8 +1,6 @@
 package id
 
 import (
-	"crypto/rand"
-	"fmt"
 	"github.com/Sirupsen/logrus"
 )
 
@@ -16,101 +14,14 @@ func init() {
 	log.Println("Initialized id")
 }
 
-type ID struct {
-	randomID []byte
-	size     int
-}
+type ID interface {
+	ServeIDs(chan ID) // sends IDs through the provided channel
+	Equals(ID) bool   // tells whether or not two ids are equal
+	GetBytes() []byte // returns a byte-slice representation of the ID
+	GetLength() int   // returns the number of bytes needed for the ID
+	SetLength(int)    // sets the number of bytes an ID uses
+	CreateFromBytes([]byte) (ID, error)
+	GetZeroID() (ID, error)
 
-//New returns an ID struct
-func New(numberOfBytes int) ID {
-	if numberOfBytes < 1 {
-		numberOfBytes = DEFAULT_SIZE
-	}
-	id := generateID(numberOfBytes)
-	return ID{id, numberOfBytes}
-}
-
-func NewFromByteSlice(slice []byte) ID {
-	if slice == nil {
-		return New(DEFAULT_SIZE) // the user screwed up, so we'll fix it
-	}
-
-	return ID{randomID: slice, size: len(slice)}
-}
-
-//ServeIDs returns ID structs through the provided channel.
-func (id *ID) ServeIDs(c chan ID) {
-	for true {
-		log.Println("Sending new ID")
-		c <- New(id.size)
-	}
-}
-
-//Equals compares two IDs.
-func (id *ID) Equals(other ID) bool {
-	//if the sizes aren't the same, don't bother iterating
-	//through the byte slices.
-	if id.size != other.size {
-		return false
-	}
-	for i := 0; i < id.size; i++ {
-		if id.randomID[i] != other.randomID[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
-//GenerateID creates a byte slice to contain
-//a bunch of cryptographically random bytes.
-//The numberOfBytes parameter is the size of the
-//randomly generated slice.
-func generateID(numberOfBytes int) []byte {
-	slice := make([]byte, numberOfBytes)
-	_, err := rand.Read(slice)
-	if err != nil {
-		log.Errorln("Error creating random id")
-		return nil
-	}
-
-	sum := 0
-	for i := 0; i < numberOfBytes; i++ {
-		sum = sum + int(slice[i])
-	}
-	if sum != 0 {
-		return slice
-	}
-	//if the id generated is zero, we need to try again
-	return generateID(numberOfBytes)
-}
-
-//GetZeroID returns a new ID structure with a totally
-//zeroed random ID.
-func GetZeroID(numberOfBytes int) (ID, error) {
-	if numberOfBytes < 1 {
-		return ID{}, fmt.Errorf("Provided number of bytes, %v, invalid.", numberOfBytes)
-	}
-
-	zeroID := make([]byte, numberOfBytes)
-	return NewFromByteSlice(zeroID), nil
-}
-
-//GetID copies the ID before returning it.
-func (id *ID) GetID() []byte {
-	return id.randomID //this is actually safe in Go
-}
-
-//GetIDSize returns the private size variable in the struct
-func (id *ID) GetIDSize() int {
-	return id.size
-}
-
-//SetIDSize sets the size in bytes of the
-//future-generated IDs.
-func (id *ID) SetIDSize(size int) {
-	if size < 0 {
-		size = DEFAULT_SIZE
-	}
-	id.size = size
+	createID() (ID, error)
 }
