@@ -1,4 +1,5 @@
 [![wercker status](https://app.wercker.com/status/a6d202a73b8cae2aa7dd3b1da1ef3c12/m "wercker status")](https://app.wercker.com/project/bykey/a6d202a73b8cae2aa7dd3b1da1ef3c12)
+[![GoDoc](https://godoc.org/github.com/KodyKantor/p2p-gossip?status.svg)](https://godoc.org/github.com/KodyKantor/p2p-gossip)
 
 # p2p-gossip
 A p2p gossip protocol for requesting artifacts.
