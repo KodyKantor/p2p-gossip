@@ -1,3 +1,4 @@
+//Package packet provides tools to turn data into a buffer which can be sent through a packet.
 package packet
 
 import (

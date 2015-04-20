@@ -1,3 +1,5 @@
+//Package id provides an interface that defines a random N-byte id generator,
+//and an implementation of the ID interface.
 package id
 
 import (
