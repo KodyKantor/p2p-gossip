@@ -10,5 +10,5 @@ func init() {
 }
 
 type Receiver struct {
-	peer Peer //nested struct
+	//TODO undefined? peer Peer //nested struct
 }
