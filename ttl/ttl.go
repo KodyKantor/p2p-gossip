@@ -25,4 +25,5 @@ type TTL interface {
 	SetTTL(int) error                    //changes TTL
 	CreateFromBytes([]byte) (TTL, error) //creates TTL from raw byte slice
 	DecrementTTL()                       //decrements TTL
+	GetLengthInBytes() int
 }

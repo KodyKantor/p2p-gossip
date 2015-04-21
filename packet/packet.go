@@ -10,6 +10,7 @@ type Packet interface {
 	bufferize() error //converts Bufferable things into a buffer
 	CreatePacket(...Bufferable) (Packet, error)
 	GetBuffer() []byte
+	CreatePacketFromBytes([]byte) (Packet, error)
 }
 
 //Bufferable interface means that a structure can be placed in a buffer.

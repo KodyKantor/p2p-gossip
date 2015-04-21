@@ -15,11 +15,11 @@ func init() {
 
 //Peers can send and receive packets.
 type Peer interface {
-	GetPort() int                         //returns the port used by the peer
-	SetPort(int) error                    //sets the port used to send/receive packets
-	GetPacketSize() int                   //returns the max size of a udp packet
-	SetPacketSize(int) error              //sets the max size of a udp packet
-	RunPeer(chan int, chan int, chan int) //runs the peer until a channel signal
+	GetPort() int                                             //returns the port used by the peer
+	SetPort(int) error                                        //sets the port used to send/receive packets
+	GetPacketSize() int                                       //returns the max size of a udp packet
+	SetPacketSize(int) error                                  //sets the max size of a udp packet
+	RunPeer(chan packet.Packet, chan packet.Packet, chan int) //runs the peer until a channel signal
 }
 
 //Senders can send udp packets.

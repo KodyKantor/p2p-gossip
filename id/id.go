@@ -17,11 +17,11 @@ func init() {
 }
 
 type ID interface {
-	ServeIDs(chan ID) // sends IDs through the provided channel
-	Equals(ID) bool   // tells whether or not two ids are equal
-	GetBytes() []byte // returns a byte-slice representation of the ID
-	GetLength() int   // returns the number of bytes needed for the ID
-	SetLength(int)    // sets the number of bytes an ID uses
+	ServeIDs(chan ID)      // sends IDs through the provided channel
+	Equals(ID) bool        // tells whether or not two ids are equal
+	GetBytes() []byte      // returns a byte-slice representation of the ID
+	GetLengthInBytes() int // returns the number of bytes needed for the ID
+	SetLength(int)         // sets the number of bytes an ID uses
 	CreateFromBytes([]byte) (ID, error)
 	GetZeroID() (ID, error)
 

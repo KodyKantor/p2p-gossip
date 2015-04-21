@@ -6,10 +6,14 @@ import (
 	"fmt"
 )
 
-const DECREMENT_VALUE = 1
+const (
+	DECREMENT_VALUE = 1
+	DEFAULT_LENGTH  = 4
+)
 
 type PeerTTL struct {
-	ttl int //time to live
+	ttl    int //time to live
+	length int
 }
 
 //SetPeerTTL sets the ttl attribute.
@@ -38,7 +42,7 @@ func (t *PeerTTL) CreateTTL(time int) (TTL, error) {
 	if time < 0 {
 		return &PeerTTL{}, fmt.Errorf("Invalid time to live: %v", time)
 	}
-	return &PeerTTL{time}, nil
+	return &PeerTTL{time, DEFAULT_LENGTH}, nil
 }
 
 // CreateFromBytes takes a byte slice and turns it into a TTL.
@@ -53,10 +57,14 @@ func (t *PeerTTL) CreateFromBytes(time []byte) (TTL, error) {
 	if err != nil {
 		return &PeerTTL{}, fmt.Errorf("Error deocding ttl: %v", err)
 	}
-	return &PeerTTL{int(ret)}, nil
+	return &PeerTTL{int(ret), DEFAULT_LENGTH}, nil
 }
 
 //DecrementTTL decrements the TTL by the constant value defined in the package.
 func (t *PeerTTL) DecrementTTL() {
 	t.ttl = t.ttl - DECREMENT_VALUE
+}
+
+func (t *PeerTTL) GetLengthInBytes() int {
+	return t.length
 }

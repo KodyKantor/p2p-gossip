@@ -63,13 +63,13 @@ func (id *PeerID) ServeIDs(c chan ID) {
 func (id *PeerID) Equals(other ID) bool {
 	//if the sizes aren't the same, don't bother iterating
 	//through the byte slices.
-	if id.GetLength() != other.GetLength() {
+	if id.GetLengthInBytes() != other.GetLengthInBytes() {
 		return false
 	}
 
 	mybytes := id.GetBytes()
 	otherbytes := other.GetBytes()
-	for i := 0; i < id.GetLength(); i++ {
+	for i := 0; i < id.GetLengthInBytes(); i++ {
 		if mybytes[i] != otherbytes[i] {
 			return false
 		}
@@ -84,7 +84,7 @@ func (id *PeerID) GetBytes() []byte {
 }
 
 //GetIDSize returns the private size variable in the struct
-func (id *PeerID) GetLength() int {
+func (id *PeerID) GetLengthInBytes() int {
 	return id.size
 }
 
