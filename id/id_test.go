@@ -51,7 +51,7 @@ func TestEquals(t *testing.T) {
 	}
 }
 
-//TestIDSize tests the GetLength() and SetIDSize() functions.
+//TestIDSize tests the GetLengthInBytes() and SetIDSize() functions.
 func TestIDSize(t *testing.T) {
 	var newID ID
 
@@ -59,19 +59,19 @@ func TestIDSize(t *testing.T) {
 	newID = new(PeerID)
 	newID.SetLength(size)
 
-	if newID.GetLength() != size {
+	if newID.GetLengthInBytes() != size {
 		t.Error("Sizes do not match")
 	}
 
 	size = 64
 	newID.SetLength(size)
-	if newID.GetLength() != size {
+	if newID.GetLengthInBytes() != size {
 		t.Error("Sizes do not match")
 	}
 
 	for size := -64; size < 1; size++ {
 		newID.SetLength(size)
-		if newID.GetLength() != DEFAULT_SIZE {
+		if newID.GetLengthInBytes() != DEFAULT_SIZE {
 			t.Errorf("SetID should return an error for a size of %v", size)
 		}
 	}
