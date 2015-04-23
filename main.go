@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/kodykantor/p2p-gossip/id"
@@ -78,6 +79,7 @@ func main() {
 	sendChan := make(chan packet.Packet, 1)
 	sendChan <- mypacket //get the packet in the channel right away
 
+	time.Sleep(time.Second * 2)
 	sender := sender.New(mypeer)
 	err = sender.Send(sendChan) // send the single packet (should be read right away)
 	if err != nil {
@@ -87,5 +89,4 @@ func main() {
 	logrus.Debugln("Sent packet!")
 
 	<-recChan
-
 }

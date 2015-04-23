@@ -3,6 +3,8 @@ package id
 import (
 	"crypto/rand"
 	"fmt"
+
+	"github.com/Sirupsen/logrus"
 )
 
 //PeerID is an implementation of the ID interface.
@@ -43,6 +45,8 @@ func (id *PeerID) CreateFromBytes(slice []byte) (ID, error) {
 	if slice == nil {
 		return &PeerID{}, fmt.Errorf("Byte slice is nil. Cannot create ID")
 	}
+
+	logrus.Debugln("Creating id from the bytes:", slice)
 
 	return &PeerID{slice, len(slice)}, nil
 }

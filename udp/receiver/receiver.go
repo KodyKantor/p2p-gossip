@@ -4,11 +4,10 @@ package receiver
 import (
 	"fmt"
 	"net"
-	"strconv"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/kodykantor/p2p-gossip/packet"
-	"github.com/kodykantor/p2p-gossip/udp"
+	"github.com/kodykantor/p2p-gossip/udp/peer"
 )
 
 func init() {
@@ -16,23 +15,30 @@ func init() {
 }
 
 type Receiver struct {
-	peer udp.Peer
+	peer *peer.Peer
 }
 
-func New(peer udp.Peer) *Receiver {
+func New(peer *peer.Peer) *Receiver {
 	//TODO check if peer is null
 	newReceiver := new(Receiver)
 	newReceiver.peer = peer
 	return newReceiver
 }
 
+const (
+	senderAddr   = "localhost:8090"
+	receiverAddr = "localhost:8080"
+	packetSize   = 512
+)
+
 //Receive receives packets from the network, turns it into a packet.Packet type,
 // and then sends it through the provided channel.
 func (r *Receiver) Receive(ch chan packet.Packet) error {
-	listenStr := "localhost:" + strconv.Itoa(r.peer.GetPort()) //convert port number to string
-	listenAddr, err := net.ResolveUDPAddr("udp", listenStr)    //resolve the listen address
+	//	senderAddr := "localhost:" + strconv.Itoa(r.peer.GetPort()) //convert port number to string
+	listenAddr, err := net.ResolveUDPAddr("udp", receiverAddr) //resolve the listen address
+	logrus.Printf("Client's actual listen address is: %v", receiverAddr)
 	if err != nil {
-		return fmt.Errorf("Error resolving udp address %v: %v", listenStr, err)
+		return fmt.Errorf("Error resolving udp address %v: %v", receiverAddr, err)
 	}
 	logrus.Debugln("Resolved listen udp address.")
 
@@ -43,16 +49,22 @@ func (r *Receiver) Receive(ch chan packet.Packet) error {
 	defer recConn.Close() //close the connection before the function returns
 	logrus.Debugln("Got listen connection from listen address.")
 
-	buf := make([]byte, r.peer.GetPacketSize()) //make a buffer to hold the max packet size
+	logrus.Debugln("Peer packet size is ", packetSize)
+
+	buf := make([]byte, packetSize) //make a buffer to hold the max packet size
 	//TODO what do the other returns do?
-	_, _, err = recConn.ReadFromUDP(buf) //read from the udp connection (blocking)
+	count, _, err := recConn.ReadFromUDP(buf) //read from the udp connection (blocking)
 	if err != nil {
 		return fmt.Errorf("Error reading from udp: %v", err)
 	}
 	logrus.Debugln("Read packet from udp.")
+	logrus.Debugln("Read ", count, "bytes from the connection.")
+	logrus.Debugln("Packet read from buffer is:\n", buf)
 
 	//Create a packet from the new buffer.
 	pack := new(packet.PeerPacket)
+
+	logrus.Debugln("Creating packet type from packet buffer.")
 	newPacket, err := pack.CreatePacketFromBytes(buf)
 	if err != nil {
 		return fmt.Errorf("Error creating packet from udp buffer: %v", err)

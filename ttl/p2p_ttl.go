@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+
+	"github.com/Sirupsen/logrus"
 )
 
 const (
@@ -47,9 +49,15 @@ func (t *PeerTTL) CreateTTL(time int) (TTL, error) {
 
 // CreateFromBytes takes a byte slice and turns it into a TTL.
 func (t *PeerTTL) CreateFromBytes(time []byte) (TTL, error) {
-	if time == nil {
+	logrus.Debugln("Entered TTL CreateFromBytes.")
+	/*if time == nil {
 		return &PeerTTL{}, fmt.Errorf("TTL byte slice is nil.")
 	}
+	if len(time) == 0 {
+		return &PeerTTL{}, fmt.Errorf("TTL byte slice is zero-length.")
+	}*/
+
+	logrus.Debugln("Creating new TTL from the buffer:", time)
 	var ret int32 //to hold the decoded value
 	buf := bytes.NewBuffer(time)
 	err := binary.Read(buf, binary.LittleEndian, &ret)

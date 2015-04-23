@@ -3,6 +3,7 @@ package packet
 import (
 	"fmt"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/kodykantor/p2p-gossip/id"
 	"github.com/kodykantor/p2p-gossip/ttl"
 )
@@ -37,6 +38,7 @@ func (pack *PeerPacket) CreatePacket(things ...Bufferable) (Packet, error) {
 }
 
 func (pack *PeerPacket) CreatePacketFromBytes(buf []byte) (Packet, error) {
+	logrus.Debugln("Entered CreatePacketFromBytes with buffer:", buf)
 	if buf == nil {
 		return &PeerPacket{}, fmt.Errorf("Buffer is nil. Cannot create packet.")
 	}
@@ -47,23 +49,32 @@ func (pack *PeerPacket) CreatePacketFromBytes(buf []byte) (Packet, error) {
 	myTTL := new(ttl.PeerTTL)
 	myID := new(id.PeerID)
 
-	idLen := myID.GetLengthInBytes()
-	ttlLen := myTTL.GetLengthInBytes()
-	newPacket.id0, err = myID.CreateFromBytes(buf[0:idLen])
+	idLen := 32 //myID.GetLengthInBytes()
+	ttlLen := 4 //myTTL.GetLengthInBytes()
+
+	tmpBuf := buf[0:idLen]
+	logrus.Debugln("Creating id0 from bytes:", tmpBuf)
+	newPacket.id0, err = myID.CreateFromBytes(tmpBuf)
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing ID from buffer: %v", err)
 	}
+
+	logrus.Debugln("Creating id1 from bytes.")
 	newPacket.id1, err = myID.CreateFromBytes(buf[idLen : idLen*2])
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing ID from buffer: %v", err)
 	}
+
+	logrus.Debugln("Creating ttl from bytes.")
 	newPacket.ttl, err = myTTL.CreateFromBytes(buf[idLen*2 : idLen*2+ttlLen])
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing TTL from buffer: %v", err)
 	}
 
+	logrus.Debugln("Setting body to the rest of the packet.")
 	newPacket.body = buf[idLen*2+ttlLen:]
 
+	logrus.Debugln("Returning new packet.")
 	return newPacket, nil
 }
 
