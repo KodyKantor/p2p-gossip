@@ -1,5 +1,5 @@
 //Peer implements the udp Peer interface.
-package udp
+package peer
 
 import (
 	"fmt"
@@ -57,5 +57,5 @@ func (p *Peer) SetPacketSize(packetsize int) error {
 //RunPeer takes a signal channel, and channels to send and receive packets.
 //Packets to be sent are read from the send channel.
 //Packets read from the network are sent through the receive channel.
-func (p *Peer) RunPeer(signal chan int, send, receive chan packet.Packet) {
+func (p *Peer) RunPeer(send, receive chan packet.Packet, signal chan int) {
 }
