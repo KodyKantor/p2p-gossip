@@ -9,7 +9,7 @@ import (
 type Packet interface {
 	bufferize() error //converts Bufferable things into a buffer
 	CreatePacket(...Bufferable) (Packet, error)
-	GetBuffer() []byte
+	GetBufferization() []byte
 	CreatePacketFromBytes([]byte) (Packet, error)
 }
 

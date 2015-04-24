@@ -24,10 +24,10 @@ type Peer interface {
 
 //Senders can send udp packets.
 type Sender interface {
-	Send(chan packet.Packet) error //sends udp packets
+	Send(chan *packet.PeerPacket) error //sends udp packets
 }
 
 //Receivers can receive udp packets.
 type Receiver interface {
-	Receive(chan packet.Packet) error //receives udp packets, and places them in the channel
+	Receive(chan *packet.PeerPacket) error //receives udp packets, and places them in the channel
 }

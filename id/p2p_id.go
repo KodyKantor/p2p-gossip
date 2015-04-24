@@ -13,6 +13,10 @@ type PeerID struct {
 	size     int    // size in bytes of ID
 }
 
+func NewID() *PeerID {
+	return &PeerID{nil, DEFAULT_SIZE}
+}
+
 //createID creates a byte slice to contain
 //a bunch of cryptographically random bytes.
 //The numberOfBytes parameter is the size of the

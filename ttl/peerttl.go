@@ -18,6 +18,10 @@ type PeerTTL struct {
 	length int
 }
 
+func NewTTL() *PeerTTL {
+	return &PeerTTL{0, DEFAULT_LENGTH}
+}
+
 //SetPeerTTL sets the ttl attribute.
 func (t *PeerTTL) SetTTL(ttl int) error {
 	if ttl < 0 {
@@ -50,12 +54,12 @@ func (t *PeerTTL) CreateTTL(time int) (TTL, error) {
 // CreateFromBytes takes a byte slice and turns it into a TTL.
 func (t *PeerTTL) CreateFromBytes(time []byte) (TTL, error) {
 	logrus.Debugln("Entered TTL CreateFromBytes.")
-	/*if time == nil {
+	if time == nil {
 		return &PeerTTL{}, fmt.Errorf("TTL byte slice is nil.")
 	}
 	if len(time) == 0 {
 		return &PeerTTL{}, fmt.Errorf("TTL byte slice is zero-length.")
-	}*/
+	}
 
 	logrus.Debugln("Creating new TTL from the buffer:", time)
 	var ret int32 //to hold the decoded value

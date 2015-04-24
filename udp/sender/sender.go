@@ -28,10 +28,12 @@ const (
 	receiverAddr = "localhost:8080"
 )
 
-func (s *Sender) Send(ch chan packet.Packet) error {
+func (s *Sender) Send(ch chan *packet.PeerPacket) error {
 	logrus.Debugln("Starting to send packet...")
 	//	senderAddr := "localhost:" + strconv.Itoa(s.peer.GetPort()) //TODO change this
 	//	receiverAddr := "localhost:" + strconv.Itoa(s.peer.GetPort())
+
+	var packetToSend *packet.PeerPacket
 
 	logrus.Printf("Client's listen address should be: %v", receiverAddr)
 	la, err := net.ResolveUDPAddr("udp", receiverAddr)
@@ -47,9 +49,9 @@ func (s *Sender) Send(ch chan packet.Packet) error {
 	defer sendConn.Close()
 
 	logrus.Debugln("Reading from channel to send.")
-	pack := <-ch //read a packet to send from the channel
-	logrus.Debugln("Received packet from channel to senD.")
-	buf := pack.GetBuffer()
+	packetToSend = <-ch //read a packet to send from the channel
+	logrus.Debugln("Received packet from channel to send.")
+	buf := packetToSend.GetBufferization()
 
 	count, err := sendConn.(*net.UDPConn).WriteToUDP(buf, la)
 	if err != nil {

@@ -33,7 +33,7 @@ const (
 
 //Receive receives packets from the network, turns it into a packet.Packet type,
 // and then sends it through the provided channel.
-func (r *Receiver) Receive(ch chan packet.Packet) error {
+func (r *Receiver) Receive(ch chan *packet.PeerPacket) error {
 	//	senderAddr := "localhost:" + strconv.Itoa(r.peer.GetPort()) //convert port number to string
 	listenAddr, err := net.ResolveUDPAddr("udp", receiverAddr) //resolve the listen address
 	logrus.Printf("Client's actual listen address is: %v", receiverAddr)
@@ -71,7 +71,7 @@ func (r *Receiver) Receive(ch chan packet.Packet) error {
 	}
 	logrus.Debugln("Created packet type from packet buffer.")
 
-	ch <- newPacket //send the formatted packet through the channel
+	ch <- newPacket.(*packet.PeerPacket) //send the formatted packet through the channel
 	logrus.Debugln("Sent packet through channel")
 
 	logrus.Debugln("Exiting Receiver.")

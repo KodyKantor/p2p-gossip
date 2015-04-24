@@ -22,9 +22,9 @@ func main() {
 	var myttl ttl.TTL
 	var pack packet.Packet
 
-	myid = new(id.PeerID)
-	myttl = new(ttl.PeerTTL)
-	pack = new(packet.PeerPacket)
+	myid = id.NewID()
+	myttl = ttl.NewTTL()
+	pack = packet.NewPacket()
 
 	myid.SetLength(32)
 	ch := make(chan id.ID, 1)
@@ -43,7 +43,7 @@ func main() {
 		logrus.Error("Error creating packet:", err)
 	}
 
-	logrus.Debugln("Mypacket is:", mypacket.GetBuffer())
+	logrus.Debugln("Mypacket is:", mypacket.GetBufferization())
 
 	mypeer := new(peer.Peer)
 	err = mypeer.SetPort(8080)
@@ -58,8 +58,8 @@ func main() {
 	}
 	logrus.Debugln("Set packet size")
 
-	recChan := make(chan packet.Packet, 1)
-	go func(chan packet.Packet) {
+	recChan := make(chan *packet.PeerPacket, 1)
+	go func(chan *packet.PeerPacket) {
 
 		//Create a 'receiver'
 		logrus.Debugln("Starting to receive packets...")
@@ -72,12 +72,13 @@ func main() {
 
 		recdPacket := <-recChan
 		logrus.Debugln("Received packet!")
-		logrus.Debugln("recdPacket is:", recdPacket.GetBuffer())
+		logrus.Debugf("recdPacket: id0: %v, id1: %v, ttl: %v\n", recdPacket.Id0.GetBytes(), recdPacket.Id1.GetBytes(), recdPacket.Ttl.GetBytes())
+		recChan <- packet.NewPacket()
 	}(recChan)
 
 	//Create a 'sender'
-	sendChan := make(chan packet.Packet, 1)
-	sendChan <- mypacket //get the packet in the channel right away
+	sendChan := make(chan *packet.PeerPacket, 1)
+	sendChan <- mypacket.(*packet.PeerPacket) //get the packet in the channel right away
 
 	time.Sleep(time.Second * 2)
 	sender := sender.New(mypeer)

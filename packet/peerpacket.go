@@ -13,10 +13,14 @@ type PeerPacket struct {
 	payload       []Bufferable //payload is a slice of bufferable things
 	bufferization []byte
 
-	id0  id.ID
-	id1  id.ID
-	ttl  ttl.TTL
+	Id0  id.ID
+	Id1  id.ID
+	Ttl  ttl.TTL
 	body []byte
+}
+
+func NewPacket() *PeerPacket {
+	return &PeerPacket{}
 }
 
 //CreatePacket takes Bufferable things, and creates a Packet from them.
@@ -43,30 +47,29 @@ func (pack *PeerPacket) CreatePacketFromBytes(buf []byte) (Packet, error) {
 		return &PeerPacket{}, fmt.Errorf("Buffer is nil. Cannot create packet.")
 	}
 	var err error
-	var newPacket *PeerPacket
-	newPacket = new(PeerPacket)
 
-	myTTL := new(ttl.PeerTTL)
-	myID := new(id.PeerID)
+	newPacket := NewPacket()
+	myTTL := ttl.NewTTL()
+	myID := id.NewID()
 
-	idLen := 32 //myID.GetLengthInBytes()
-	ttlLen := 4 //myTTL.GetLengthInBytes()
+	idLen := myID.GetLengthInBytes()
+	ttlLen := myTTL.GetLengthInBytes()
 
 	tmpBuf := buf[0:idLen]
-	logrus.Debugln("Creating id0 from bytes:", tmpBuf)
-	newPacket.id0, err = myID.CreateFromBytes(tmpBuf)
+	logrus.Debugln("Creating Id0 from bytes:", tmpBuf)
+	newPacket.Id0, err = myID.CreateFromBytes(tmpBuf)
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing ID from buffer: %v", err)
 	}
 
-	logrus.Debugln("Creating id1 from bytes.")
-	newPacket.id1, err = myID.CreateFromBytes(buf[idLen : idLen*2])
+	logrus.Debugln("Creating Id1 from bytes.")
+	newPacket.Id1, err = myID.CreateFromBytes(buf[idLen : idLen*2])
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing ID from buffer: %v", err)
 	}
 
 	logrus.Debugln("Creating ttl from bytes.")
-	newPacket.ttl, err = myTTL.CreateFromBytes(buf[idLen*2 : idLen*2+ttlLen])
+	newPacket.Ttl, err = myTTL.CreateFromBytes(buf[idLen*2 : idLen*2+ttlLen])
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing TTL from buffer: %v", err)
 	}
@@ -100,6 +103,6 @@ func (pack *PeerPacket) bufferize() error {
 	return nil
 }
 
-func (pack *PeerPacket) GetBuffer() []byte {
+func (pack *PeerPacket) GetBufferization() []byte {
 	return pack.bufferization
 }
