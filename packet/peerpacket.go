@@ -13,12 +13,13 @@ type PeerPacket struct {
 	payload       []Bufferable //payload is a slice of bufferable things
 	bufferization []byte
 
-	Id0  id.ID
-	Id1  id.ID
-	Ttl  ttl.TTL
+	ID0  id.ID
+	ID1  id.ID
+	TTL  ttl.TTL
 	body []byte
 }
 
+//NewPacket returns a pointer to a PeerPacket type.
 func NewPacket() *PeerPacket {
 	return &PeerPacket{}
 }
@@ -41,6 +42,7 @@ func (pack *PeerPacket) CreatePacket(things ...Bufferable) (Packet, error) {
 
 }
 
+//CreatePacketFromBytes creates a PeerPacket from the provided byte slice.
 func (pack *PeerPacket) CreatePacketFromBytes(buf []byte) (Packet, error) {
 	logrus.Debugln("Entered CreatePacketFromBytes with buffer:", buf)
 	if buf == nil {
@@ -57,19 +59,19 @@ func (pack *PeerPacket) CreatePacketFromBytes(buf []byte) (Packet, error) {
 
 	tmpBuf := buf[0:idLen]
 	logrus.Debugln("Creating Id0 from bytes:", tmpBuf)
-	newPacket.Id0, err = myID.CreateFromBytes(tmpBuf)
+	newPacket.ID0, err = myID.CreateFromBytes(tmpBuf)
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing ID from buffer: %v", err)
 	}
 
 	logrus.Debugln("Creating Id1 from bytes.")
-	newPacket.Id1, err = myID.CreateFromBytes(buf[idLen : idLen*2])
+	newPacket.ID1, err = myID.CreateFromBytes(buf[idLen : idLen*2])
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing ID from buffer: %v", err)
 	}
 
 	logrus.Debugln("Creating ttl from bytes.")
-	newPacket.Ttl, err = myTTL.CreateFromBytes(buf[idLen*2 : idLen*2+ttlLen])
+	newPacket.TTL, err = myTTL.CreateFromBytes(buf[idLen*2 : idLen*2+ttlLen])
 	if err != nil {
 		return &PeerPacket{}, fmt.Errorf("Error parsing TTL from buffer: %v", err)
 	}
@@ -86,7 +88,8 @@ func (pack *PeerPacket) CreatePacketFromBytes(buf []byte) (Packet, error) {
 func (pack *PeerPacket) bufferize() error {
 	//TODO create buffer first, then add bytes (faster for memory allocation)
 
-	buffer := make([]byte, 0) //make an empty buffer that we'll append to
+	var buffer []byte
+	//buffer := make([]byte, 0) //make an empty buffer that we'll append to
 
 	for ind, bufferable := range pack.payload {
 		//iterate through bufferable things to create a megabuffer.
@@ -103,6 +106,7 @@ func (pack *PeerPacket) bufferize() error {
 	return nil
 }
 
+//GetBufferization returns the raw bytes of the packet.
 func (pack *PeerPacket) GetBufferization() []byte {
 	return pack.bufferization
 }
