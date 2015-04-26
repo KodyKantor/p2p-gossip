@@ -9,20 +9,24 @@ import (
 )
 
 const (
-	DECREMENT_VALUE = 1
-	DEFAULT_LENGTH  = 4
+	//DecrementValue is the default value to use when decrementing TTLs.
+	DecrementValue = 1
+	//DefaultLength is the default length in bytes of generated TTLs.
+	DefaultLength = 4
 )
 
+//PeerTTL is an implementation of the TTL interface.
 type PeerTTL struct {
 	ttl    int //time to live
 	length int
 }
 
+//NewTTL returns a pointer to a new TTL type.
 func NewTTL() *PeerTTL {
-	return &PeerTTL{0, DEFAULT_LENGTH}
+	return &PeerTTL{0, DefaultLength}
 }
 
-//SetPeerTTL sets the ttl attribute.
+//SetTTL sets the ttl attribute.
 func (t *PeerTTL) SetTTL(ttl int) error {
 	if ttl < 0 {
 		return fmt.Errorf("Invalid time to live: %v", ttl)
@@ -31,7 +35,7 @@ func (t *PeerTTL) SetTTL(ttl int) error {
 	return nil
 }
 
-//GetPeerTTL returns the ttl attribute.
+//GetTTL returns the ttl attribute.
 func (t *PeerTTL) GetTTL() int {
 	return t.ttl
 }
@@ -48,17 +52,17 @@ func (t *PeerTTL) CreateTTL(time int) (TTL, error) {
 	if time < 0 {
 		return &PeerTTL{}, fmt.Errorf("Invalid time to live: %v", time)
 	}
-	return &PeerTTL{time, DEFAULT_LENGTH}, nil
+	return &PeerTTL{time, DefaultLength}, nil
 }
 
 // CreateFromBytes takes a byte slice and turns it into a TTL.
 func (t *PeerTTL) CreateFromBytes(time []byte) (TTL, error) {
 	logrus.Debugln("Entered TTL CreateFromBytes.")
 	if time == nil {
-		return &PeerTTL{}, fmt.Errorf("TTL byte slice is nil.")
+		return &PeerTTL{}, fmt.Errorf("TTL byte slice is nil")
 	}
 	if len(time) == 0 {
-		return &PeerTTL{}, fmt.Errorf("TTL byte slice is zero-length.")
+		return &PeerTTL{}, fmt.Errorf("TTL byte slice is zero-length")
 	}
 
 	logrus.Debugln("Creating new TTL from the buffer:", time)
@@ -69,14 +73,15 @@ func (t *PeerTTL) CreateFromBytes(time []byte) (TTL, error) {
 	if err != nil {
 		return &PeerTTL{}, fmt.Errorf("Error deocding ttl: %v", err)
 	}
-	return &PeerTTL{int(ret), DEFAULT_LENGTH}, nil
+	return &PeerTTL{int(ret), DefaultLength}, nil
 }
 
 //DecrementTTL decrements the TTL by the constant value defined in the package.
 func (t *PeerTTL) DecrementTTL() {
-	t.ttl = t.ttl - DECREMENT_VALUE
+	t.ttl = t.ttl - DecrementValue
 }
 
+//GetLengthInBytes returns the length of the generated TTLs (in bytes).
 func (t *PeerTTL) GetLengthInBytes() int {
 	return t.length
 }

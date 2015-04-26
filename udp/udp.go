@@ -7,13 +7,11 @@ import (
 	"github.com/kodykantor/p2p-gossip/packet"
 )
 
-var log = logrus.New()
-
 func init() {
-	log.Println("Initialized udp")
+	logrus.Debugln("Initialized udp package.")
 }
 
-//Peers can send and receive packets.
+//Peer can send and receive packets.
 type Peer interface {
 	GetPort() int                                             //returns the port used by the peer
 	SetPort(int) error                                        //sets the port used to send/receive packets
@@ -22,12 +20,12 @@ type Peer interface {
 	RunPeer(chan packet.Packet, chan packet.Packet, chan int) //runs the peer until a channel signal
 }
 
-//Senders can send udp packets.
+//Sender can send udp packets.
 type Sender interface {
 	Send(chan *packet.PeerPacket) error //sends udp packets
 }
 
-//Receivers can receive udp packets.
+//Receiver can receive udp packets.
 type Receiver interface {
 	Receive(chan *packet.PeerPacket) error //receives udp packets, and places them in the channel
 }

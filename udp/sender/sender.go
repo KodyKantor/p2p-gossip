@@ -9,13 +9,16 @@ import (
 	"github.com/kodykantor/p2p-gossip/udp/peer"
 )
 
+//Sender implements the Sender interface.
 type Sender struct {
 	peer *peer.Peer
 }
 
 func init() {
+	logrus.Debugln("Initialized Sender package.")
 }
 
+//New returns a pointer to a Sender type. Takes an initialized peer pointer.
 func New(peer *peer.Peer) *Sender {
 	//TODO check if peer is nil
 	newSender := new(Sender)
@@ -28,6 +31,9 @@ const (
 	receiverAddr = "localhost:8080"
 )
 
+//Send sends packets through UDP to the Sender's defined peer partners.
+//If an error occurs, an error is returned. Packets that need to be sent are
+//passed in through a packet channel.
 func (s *Sender) Send(ch chan *packet.PeerPacket) error {
 	logrus.Debugln("Starting to send packet...")
 	//	senderAddr := "localhost:" + strconv.Itoa(s.peer.GetPort()) //TODO change this

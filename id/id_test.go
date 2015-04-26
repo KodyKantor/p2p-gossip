@@ -71,7 +71,7 @@ func TestIDSize(t *testing.T) {
 
 	for size := -64; size < 1; size++ {
 		newID.SetLength(size)
-		if newID.GetLengthInBytes() != DEFAULT_SIZE {
+		if newID.GetLengthInBytes() != DefaultSize {
 			t.Errorf("SetID should return an error for a size of %v", size)
 		}
 	}

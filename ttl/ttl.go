@@ -7,14 +7,13 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
-var log = logrus.New()
-
 const (
-	DEFAULT_TTL = 30
+	//DefaultTTL is the default value for all generated TTLs.
+	DefaultTTL = 30
 )
 
 func init() {
-	log.Println("Initialized ttl")
+	logrus.Debugln("Initialized ttl")
 }
 
 //TTL implements the Bufferable interface.

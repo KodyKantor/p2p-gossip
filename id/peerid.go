@@ -13,8 +13,9 @@ type PeerID struct {
 	size     int    // size in bytes of ID
 }
 
+//NewID returns a pointer to a PeerID type.
 func NewID() *PeerID {
-	return &PeerID{nil, DEFAULT_SIZE}
+	return &PeerID{nil, DefaultSize}
 }
 
 //createID creates a byte slice to contain
@@ -42,9 +43,9 @@ func (id *PeerID) createID() (ID, error) {
 	}
 
 	return id.createID() //try again, because we got a zero id
-
 }
 
+//CreateFromBytes creates an ID from the provided byte slice.
 func (id *PeerID) CreateFromBytes(slice []byte) (ID, error) {
 	if slice == nil {
 		return &PeerID{}, fmt.Errorf("Byte slice is nil. Cannot create ID")
@@ -86,25 +87,26 @@ func (id *PeerID) Equals(other ID) bool {
 	return true
 }
 
-//GetID copies the ID before returning it.
+//GetBytes copies the ID before returning it.
 func (id *PeerID) GetBytes() []byte {
 	return id.randomID //this is actually safe in Go
 }
 
-//GetIDSize returns the private size variable in the struct
+//GetLengthInBytes returns the private size variable in the struct
 func (id *PeerID) GetLengthInBytes() int {
 	return id.size
 }
 
-//SetIDSize sets the size in bytes of the
+//SetLength sets the size in bytes of the
 //future-generated IDs.
 func (id *PeerID) SetLength(size int) {
 	if size < 1 {
-		size = DEFAULT_SIZE
+		size = DefaultSize
 	}
 	id.size = size
 }
 
+//GetZeroID returns an ID type with an all-zero id.
 func (id *PeerID) GetZeroID() (ID, error) {
 	if id.size < 1 {
 		return &PeerID{}, fmt.Errorf("Invalid id size: %v", id.size)

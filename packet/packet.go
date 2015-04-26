@@ -1,9 +1,7 @@
 //Package packet provides tools to turn data into a buffer which can be sent through a packet.
 package packet
 
-import (
-	"fmt"
-)
+import "github.com/Sirupsen/logrus"
 
 //Packet interface defines the functionality for UDP packets.
 type Packet interface {
@@ -19,5 +17,5 @@ type Bufferable interface {
 }
 
 func init() {
-	fmt.Println("Initialed packet package")
+	logrus.Debugln("Initialed packet package")
 }

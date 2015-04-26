@@ -86,12 +86,12 @@ func TestGetBuffer(t *testing.T) {
 		t.Error("GetBytes should have been called, but was not.")
 	}
 
-	buf := newPacket.GetBuffer()
+	buf := newPacket.GetBufferization()
 	if buf == nil {
 		t.Error("GetBuffer returned a nil buffer")
 	}
 	if !myBuffer.Equals(buf) {
-		t.Error("Buffers are not equal. %v != %v", myBuffer.Buffer, buf)
+		t.Errorf("Buffers are not equal. %v != %v", myBuffer.Buffer, buf)
 	}
 
 	//test two buffers
@@ -114,7 +114,7 @@ func TestGetBuffer(t *testing.T) {
 		t.Error("GetBytes should have been called, but was not.")
 	}
 
-	buf = newPacket.GetBuffer()
+	buf = newPacket.GetBufferization()
 	if buf == nil {
 		t.Error("GetBuffer returned a nil buffer")
 	}

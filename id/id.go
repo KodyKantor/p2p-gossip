@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	DEFAULT_SIZE int = 32
+	//DefaultSize is the default size of generated IDs.
+	DefaultSize int = 32
 )
 
 var log = logrus.New()
@@ -16,6 +17,8 @@ func init() {
 	log.Println("Initialized id")
 }
 
+//ID interface provides functionality for creating bufferizable IDs to send
+// in packets.
 type ID interface {
 	ServeIDs(chan ID)      // sends IDs through the provided channel
 	Equals(ID) bool        // tells whether or not two ids are equal
