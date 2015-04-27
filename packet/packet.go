@@ -19,3 +19,8 @@ type Bufferable interface {
 func init() {
 	logrus.Debugln("Initialed packet package")
 }
+
+//BufferizeString is a convenience method for converting strings to byte slices.
+func BufferizeString(str string) []byte {
+	return []byte(str)
+}

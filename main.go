@@ -1,16 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 )
 
+//cmdGet uses REST to make a request to the peer's REST server.
+//The resource requested is a GET parameter.
 func cmdGet(c *cli.Context) {
-	fmt.Println("Inside Get Command!")
-	fmt.Println("Resource to get is ", c.String("resource"))
+	logrus.Debugln("Inside Get Command!")
+	logrus.Debugln("Resource to get is ", c.String("resource"))
+
 }
 
 func runApp(c *cli.Context) {
@@ -24,12 +26,10 @@ func runApp(c *cli.Context) {
 }
 
 func main() {
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.Println("Begin main")
-
 	app := cli.NewApp()
 	app.Name = "gossip"
 	app.Usage = "Enter a command to get resources or show resources."
+	app.Action = runApp
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
@@ -51,7 +51,6 @@ func main() {
 		},
 	}
 
-	app.Action = runApp
 	app.Run(os.Args)
 
 	/*
