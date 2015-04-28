@@ -1,4 +1,4 @@
-//Receiver implements the udp Receiver interface.
+//Package receiver implements the udp Receiver interface.
 package receiver
 
 import (
@@ -14,10 +14,12 @@ func init() {
 	logrus.Debugln("Initialized receiver")
 }
 
+//Receiver retains information about the running peer.
 type Receiver struct {
 	peer *peer.Peer
 }
 
+//New returns a pointer to a Receiver.
 func New(peer *peer.Peer) *Receiver {
 	//TODO check if peer is null
 	newReceiver := new(Receiver)
@@ -52,28 +54,28 @@ func (r *Receiver) Receive(ch chan *packet.PeerPacket) error {
 	logrus.Debugln("Peer packet size is ", packetSize)
 
 	buf := make([]byte, packetSize) //make a buffer to hold the max packet size
-	//TODO what do the other returns do?
-	count, _, err := recConn.ReadFromUDP(buf) //read from the udp connection (blocking)
-	if err != nil {
-		return fmt.Errorf("Error reading from udp: %v", err)
+	for true {                      // listen for packets forever
+		count, _, err := recConn.ReadFromUDP(buf) //read from the udp connection (blocking)
+		if err != nil {
+			return fmt.Errorf("Error reading from udp: %v", err)
+		}
+		logrus.Debugln("Read packet from udp.")
+		logrus.Debugln("Read ", count, "bytes from the connection.")
+		logrus.Debugln("Packet read from buffer is:\n", buf)
+
+		//Create a packet from the new buffer.
+		pack := new(packet.PeerPacket)
+
+		logrus.Debugln("Creating packet type from packet buffer.")
+		newPacket, err := pack.CreatePacketFromBytes(buf)
+		if err != nil {
+			return fmt.Errorf("Error creating packet from udp buffer: %v", err)
+		}
+		logrus.Debugln("Created packet type from packet buffer.")
+
+		ch <- newPacket.(*packet.PeerPacket) //send the formatted packet through the channel
+		logrus.Debugln("Sent packet through channel")
 	}
-	logrus.Debugln("Read packet from udp.")
-	logrus.Debugln("Read ", count, "bytes from the connection.")
-	logrus.Debugln("Packet read from buffer is:\n", buf)
-
-	//Create a packet from the new buffer.
-	pack := new(packet.PeerPacket)
-
-	logrus.Debugln("Creating packet type from packet buffer.")
-	newPacket, err := pack.CreatePacketFromBytes(buf)
-	if err != nil {
-		return fmt.Errorf("Error creating packet from udp buffer: %v", err)
-	}
-	logrus.Debugln("Created packet type from packet buffer.")
-
-	ch <- newPacket.(*packet.PeerPacket) //send the formatted packet through the channel
-	logrus.Debugln("Sent packet through channel")
-
 	logrus.Debugln("Exiting Receiver.")
 	return nil
 }

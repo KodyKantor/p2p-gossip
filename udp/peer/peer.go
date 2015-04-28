@@ -1,12 +1,8 @@
-//Peer implements the udp Peer interface.
+//Package peer implements the udp Peer interface.
 package peer
 
-import (
-	"fmt"
-	"github.com/kodykantor/p2p-gossip/packet"
-)
+import "fmt"
 
-//TODO change hard-coded checks to constants.
 const (
 	minimumPortValue  = 80
 	maximumPortValue  = 65535
@@ -52,10 +48,4 @@ func (p *Peer) SetPacketSize(packetsize int) error {
 
 	p.packetsize = packetsize
 	return nil
-}
-
-//RunPeer takes a signal channel, and channels to send and receive packets.
-//Packets to be sent are read from the send channel.
-//Packets read from the network are sent through the receive channel.
-func (p *Peer) RunPeer(send, receive chan packet.Packet, signal chan int) {
 }
