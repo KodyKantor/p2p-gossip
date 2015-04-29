@@ -5,12 +5,14 @@ import (
 	"time"
 
 	"github.com/kodykantor/p2p-gossip/client"
+	"github.com/kodykantor/p2p-gossip/packet"
 )
 
 func TestServerPing(t *testing.T) {
-	go ServeRest() //run in the background
+	t.Log("Testing Ping functionality")
+	go ServeRest(8080, nil, nil) //run in the background
 
-	time.Sleep(time.Second * 1) //sleep for a second
+	time.Sleep(time.Millisecond * 500) //sleep for a half second
 	cli := client.RestClient{Hostname: "http://localhost:8080"}
 
 	str, err := cli.Ping()
@@ -23,10 +25,12 @@ func TestServerPing(t *testing.T) {
 }
 
 func TestServerRequest(t *testing.T) {
-	go ServeRest()
+	t.Log("Testing 'Find' functionality")
+	mych := make(chan *packet.PeerPacket, 1)
+	go ServeRest(8070, mych, mych)
 
-	time.Sleep(time.Second * 1)
-	cli := client.RestClient{Hostname: "http://localhost:8080"}
+	time.Sleep(time.Millisecond * 500) //sleep .5 seconds
+	cli := client.RestClient{Hostname: "http://localhost:8070"}
 
 	str, err := cli.Resource("cats.jpg")
 	if err != nil {

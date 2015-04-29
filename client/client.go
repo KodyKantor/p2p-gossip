@@ -24,6 +24,7 @@ func (r *RestClient) GetResource(resource string) error {
 	if err != nil {
 		return fmt.Errorf("Error making request for resource: %v", err)
 	}
+
 	return nil
 }
 

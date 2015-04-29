@@ -28,8 +28,8 @@ func New(peer *peer.Peer) *Receiver {
 }
 
 const (
-	senderAddr   = "localhost:8090"
-	receiverAddr = "localhost:8080"
+	senderAddr   = "localhost:12349"
+	receiverAddr = "localhost:12345"
 	packetSize   = 512
 )
 

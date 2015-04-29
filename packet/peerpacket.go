@@ -16,7 +16,7 @@ type PeerPacket struct {
 	ID0  id.ID
 	ID1  id.ID
 	TTL  ttl.TTL
-	body []byte
+	Body []byte
 }
 
 //NewPacket returns a pointer to a PeerPacket type.
@@ -77,7 +77,8 @@ func (pack *PeerPacket) CreatePacketFromBytes(buf []byte) (Packet, error) {
 	}
 
 	logrus.Debugln("Setting body to the rest of the packet.")
-	newPacket.body = buf[idLen*2+ttlLen:]
+	newPacket.Body = buf[idLen*2+ttlLen:]
+	logrus.Debugln("Body of packet is:", newPacket.Body)
 
 	logrus.Debugln("Returning new packet.")
 	return newPacket, nil
@@ -89,7 +90,6 @@ func (pack *PeerPacket) bufferize() error {
 	//TODO create buffer first, then add bytes (faster for memory allocation)
 
 	var buffer []byte
-	//buffer := make([]byte, 0) //make an empty buffer that we'll append to
 
 	for ind, bufferable := range pack.payload {
 		//iterate through bufferable things to create a megabuffer.
@@ -99,6 +99,7 @@ func (pack *PeerPacket) bufferize() error {
 		if buf == nil {
 			return fmt.Errorf("Index %v has a nil buffer.", ind)
 		}
+		logrus.Debugln("Appending the buffer:", buf)
 		buffer = append(buffer, buf...)
 	}
 

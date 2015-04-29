@@ -14,7 +14,7 @@ const (
 var log = logrus.New()
 
 func init() {
-	log.Println("Initialized id")
+	log.Debugln("Initialized id")
 }
 
 //ID interface provides functionality for creating bufferizable IDs to send

@@ -27,8 +27,8 @@ func New(peer *peer.Peer) *Sender {
 }
 
 const (
-	senderAddr   = "localhost:8090"
-	receiverAddr = "localhost:8080"
+	senderAddr   = "localhost:12349"
+	receiverAddr = "localhost:12345"
 )
 
 //Send sends packets through UDP to the Sender's defined peer partners.
@@ -54,17 +54,18 @@ func (s *Sender) Send(ch chan *packet.PeerPacket) error {
 	}
 	defer sendConn.Close()
 
-	logrus.Debugln("Reading from channel to send.")
-	packetToSend = <-ch //read a packet to send from the channel
-	logrus.Debugln("Received packet from channel to send.")
-	buf := packetToSend.GetBufferization()
+	for true {
+		logrus.Debugln("Reading from channel to send.")
+		packetToSend = <-ch //read a packet to send from the channel
+		logrus.Debugln("Received packet from channel to send.")
+		buf := packetToSend.GetBufferization()
 
-	count, err := sendConn.(*net.UDPConn).WriteToUDP(buf, la)
-	if err != nil {
-		return fmt.Errorf("Error writing packet to UDP: %v", err)
+		count, err := sendConn.(*net.UDPConn).WriteToUDP(buf, la)
+		if err != nil {
+			return fmt.Errorf("Error writing packet to UDP: %v", err)
+		}
+		logrus.Debugln("Sent ", count, "bytes.")
+		logrus.Debugln("Sender sent packet!")
 	}
-	logrus.Debugln("Sent ", count, "bytes.")
-	logrus.Debugln("Sender sent packet!")
-
 	return nil
 }

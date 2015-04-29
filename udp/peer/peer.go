@@ -1,7 +1,11 @@
 //Package peer implements the udp Peer interface.
 package peer
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Sirupsen/logrus"
+)
 
 const (
 	minimumPortValue  = 80
@@ -18,7 +22,7 @@ type Peer struct {
 }
 
 func init() {
-	fmt.Println("Initialized peer")
+	logrus.Debugln("Initialized peer")
 }
 
 //GetPort returns the peer's port.

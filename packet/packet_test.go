@@ -124,3 +124,11 @@ func TestGetBuffer(t *testing.T) {
 	}
 
 }
+
+func TestBufferizableString(t *testing.T) {
+	s := BufferizableString{Str: "hello there!"}
+	slice := s.GetBytes()
+	if slice == nil {
+		t.Error("Buffer is nil")
+	}
+}

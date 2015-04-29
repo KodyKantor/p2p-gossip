@@ -20,7 +20,13 @@ func init() {
 	logrus.Debugln("Initialed packet package")
 }
 
-//BufferizeString is a convenience method for converting strings to byte slices.
-func BufferizeString(str string) []byte {
-	return []byte(str)
+//BufferizableString is a wrapper around the string primitive
+//so that it can be easily placed in a buffer to be sent in a packet.
+type BufferizableString struct {
+	Str string
+}
+
+//GetBytes will convert a string into its byte-slice representation.
+func (s *BufferizableString) GetBytes() []byte {
+	return []byte(s.Str)
 }
