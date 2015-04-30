@@ -2,20 +2,117 @@ package packet
 
 import (
 	"testing"
+
+	"github.com/kodykantor/p2p-gossip/id"
+	"github.com/kodykantor/p2p-gossip/ttl"
 )
 
 //TestBufferable implements the Bufferable interface,
 //and is used to test the PeerPacket type.
 type TestBufferable struct {
-	GetBytesCalled bool
-
-	Buffer []byte //buffer for testing
+	GetBytesCalled bool   //tells if the GetBytes() func was called
+	Buffer         []byte //buffer for testing
 }
 
 func (t *TestBufferable) GetBytes() []byte {
 	t.GetBytesCalled = true
 
 	return t.Buffer
+}
+
+func TestCreatePacketFromBytes(t *testing.T) {
+	myID := id.NewID()
+	myTTL := ttl.NewTTL()
+	idLen := myID.GetLengthInBytes()
+	ttlLen := myTTL.GetLengthInBytes()
+	bodyLen := 20
+
+	idbuf0 := make([]byte, idLen)
+	idbuf1 := make([]byte, idLen)
+	ttlbuf := make([]byte, ttlLen)
+	bodybuf := make([]byte, bodyLen) //20 bytes for the body
+
+	for i := 0; i < idLen; i++ {
+		idbuf0[i] = byte(i)
+	}
+	t.Logf("idbuf0 is %v", idbuf0)
+	for i := 1; i < idLen; i++ {
+		idbuf1[idLen-i] = byte(i)
+	}
+	t.Logf("idbuf1 is %v", idbuf1)
+	for i := 0; i < ttlLen; i++ {
+		ttlbuf[i] = byte(i)
+	}
+	t.Logf("ttlbuf is %v", ttlbuf)
+	for i := 0; i < bodyLen; i++ {
+		bodybuf[i] = byte(i)
+	}
+	t.Logf("bodybuf is %v", bodybuf)
+
+	//make a mega buffer (a packet)
+	x := append(idbuf0, idbuf1...)
+	x = append(x, ttlbuf...)
+	x = append(x, bodybuf...)
+
+	testPacket := new(PeerPacket)
+	pack, err := testPacket.CreatePacketFromBytes(x)
+	if err != nil {
+		t.Errorf("Error creating packet from megabuffer: %v", err)
+	}
+
+	id0 := pack.(*PeerPacket).ID0
+	id1 := pack.(*PeerPacket).ID1
+	ttl := pack.(*PeerPacket).TTL
+	body := pack.(*PeerPacket).Body
+
+	if id0 == nil || id1 == nil || ttl == nil {
+		t.Error("IDs or TTL is nil")
+	}
+
+	slice := id0.GetBytes()
+	for ind, val := range slice {
+		if val != idbuf0[ind] {
+			t.Errorf("Expected %v, got %v", idbuf0[ind], val)
+		}
+	}
+
+	slice = id1.GetBytes()
+	for ind, val := range slice {
+		if val != idbuf1[ind] {
+			t.Errorf("Expected %v, got %v", idbuf1[ind], val)
+		}
+	}
+
+	//Since ttls are an int represented by a byte slice,
+	// we have to massage the data we sent in a little bit.
+	slice = ttl.GetBytes()
+	newTTL, err := myTTL.CreateFromBytes(ttlbuf)
+	if err != nil {
+		t.Errorf("Error creating ttl from bytes. Check the ttl functions. %v", err)
+	}
+	ttlBufAsBytes := newTTL.GetBytes()
+
+	t.Logf("Received %v", slice)
+	t.Logf("Comparing to %v", ttlbuf)
+	for ind, val := range slice {
+		if val != ttlBufAsBytes[ind] {
+			t.Errorf("Expected %v, got %v", ttlBufAsBytes[ind], val)
+		}
+	}
+
+	t.Logf("Received %v", body)
+	t.Logf("Comparing to %v", bodybuf)
+	for ind, val := range body {
+		if val != bodybuf[ind] {
+			t.Errorf("Expected %v, got %v", bodybuf[ind], val)
+		}
+	}
+
+	_, err = testPacket.CreatePacketFromBytes(nil)
+	if err == nil {
+		t.Error("CreatePacketFromBytes should return an error for nil slice")
+	}
+
 }
 
 func (t *TestBufferable) Equals(other []byte) bool {
