@@ -8,7 +8,7 @@ import (
 
 const (
 	//DefaultSize is the default size of generated IDs.
-	DefaultSize int = 32
+	DefaultSize int = 16
 )
 
 var log = logrus.New()
