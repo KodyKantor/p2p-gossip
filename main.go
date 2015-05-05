@@ -29,7 +29,6 @@ func cmdGet(c *cli.Context) {
 	if err != nil {
 		logrus.Errorf("Error getting resource from the server: %v", err)
 	}
-
 }
 
 func cmdPeer(c *cli.Context) {

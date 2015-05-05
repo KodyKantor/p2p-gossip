@@ -6,17 +6,28 @@ A p2p gossip protocol for requesting artifacts.
 
 ## Building
 From the top-level directory:
+<br />
+`go get -v` <br />
 `go build main.go`
 
+## Running
+Run the peer by passing in the `-p` argument to the binary. This will run the peer in the foreground.
+
+For example, `./gossip -p --verbose`
+
+Instantiate the binary subsequent times to receive resources with the `get` argument.
+
+For example, `./gossip get cats.jpg`
+
 ## Running Tests
-Navigate to a sub-directory
-`go test`
+Running the unit tests doesn't require any setup.
+`go test ./...`
 
 ## Package Descriptions
 ### ID
 The ID package provides functionality for generating unique, random IDs. IDs consist of a simple byte slice, and a size.
 <br />
-To use the ID package, I recommend making a 'master' ID running new(PeerID), and then calling the ServeIDs function on that ID pointer. 
+To use the ID package, I recommend making a 'master' ID running new(PeerID), and then calling the ServeIDs function on that ID pointer.
 The ServeIDs function will feed new IDs through a channel (thread safe queue primitive for inter-process communication).
 <br /><br />
 
